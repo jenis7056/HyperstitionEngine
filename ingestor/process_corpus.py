@@ -107,6 +107,12 @@ def main():
         "Y_Harari", "AI"
     ]
 
+    manifest = {
+        "spirits": [],
+        "total_sentences": 0,
+        "total_tokens": 0
+    }
+
     for folder in sub_folders:
         data = process_folder(folder, nlp)
         if data:
@@ -114,6 +120,18 @@ def main():
             with open(output_path, 'w', encoding='utf-8') as f:
                 json.dump(data, f, ensure_ascii=False, indent=2)
             print(f"Saved {output_path}")
+            
+            # Update manifest
+            manifest["spirits"].append(folder)
+            manifest["total_sentences"] += len(data["sentences"])
+            # Estimate tokens (rough count)
+            manifest["total_tokens"] += sum(len(s.split()) for s in data["sentences"])
+
+    # Save manifest
+    manifest_path = os.path.join(OUTPUT_DIR, "corpus_manifest.json")
+    with open(manifest_path, 'w', encoding='utf-8') as f:
+        json.dump(manifest, f, ensure_ascii=False, indent=2)
+    print(f"Saved {manifest_path}")
 
 if __name__ == "__main__":
     main()
