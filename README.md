@@ -21,9 +21,12 @@ graph TD
     subgraph "HyperstitionEngine (React)"
         B -->|Load| C[Corpus Loader]
         C --> D[Markov Engine]
+        C --> H[Grammar Engine]
         E[Entropy Pool <br/> p5.js] -->|Noise/Input| F[Entropy Store <br/> Zustand]
         F -->|Trigger| D
+        F -->|Trigger| H
         D -->|Generated Text| G[Oracle Display]
+        H -->|Generated Text| G
     end
 ```
 

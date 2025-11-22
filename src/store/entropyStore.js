@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { create } from 'zustand';
 
 const useEntropyStore = create((set) => ({
     entropyLevel: 0,
@@ -6,6 +7,7 @@ const useEntropyStore = create((set) => ({
     selectedSpirits: [],
     generatedText: "",
     isGenerating: false,
+    generationMode: 'markov', // 'markov' | 'grammar'
 
     addEntropy: (amount) => set((state) => ({
         entropyLevel: Math.min(state.entropyLevel + amount, state.maxEntropy)
@@ -23,6 +25,8 @@ const useEntropyStore = create((set) => ({
             return { selectedSpirits: [...state.selectedSpirits, spiritId] };
         }
     }),
+
+    setGenerationMode: (mode) => set({ generationMode: mode }),
 
     setGeneratedText: (text) => set({ generatedText: text }),
     setIsGenerating: (isGenerating) => set({ isGenerating }),

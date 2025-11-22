@@ -1,12 +1,23 @@
-// Rhyme and Constraint Logic Placeholder
 import rita from 'rita';
 
 export const findRhyme = (word) => {
-    // TODO: Implement rhyme finding using RiTa
-    return [];
+    try {
+        return rita.rhymes(word);
+    } catch (e) {
+        console.warn("RiTa rhyme error:", e);
+        return [];
+    }
 };
 
-export const checkConstraint = (text, constraint) => {
-    // TODO: Implement constraint checking
-    return true;
+export const getPOS = (word) => {
+    try {
+        return rita.pos(word);
+    } catch (e) {
+        return [];
+    }
 };
+
+export const analyzeText = (text) => {
+    return rita.analyze(text);
+};
+
