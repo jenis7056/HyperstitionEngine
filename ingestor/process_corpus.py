@@ -6,8 +6,9 @@ from tqdm import tqdm
 from collections import defaultdict
 
 # Configuration
-RAW_CORPUS_DIR = "../raw_corpus_source"
-OUTPUT_DIR = "../src/assets/corpus"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+RAW_CORPUS_DIR = os.path.join(BASE_DIR, "../raw_corpus_source")
+OUTPUT_DIR = os.path.join(BASE_DIR, "../src/assets/corpus")
 NLP_MODEL = "en_core_web_sm"
 
 def ensure_directories():
@@ -41,16 +42,20 @@ def process_folder(folder_name, nlp):
     full_text = ""
     print(f"Processing {folder_name}...")
     
+    processed_files = []
+    
     files = [f for f in os.listdir(folder_path) if f.lower().endswith('.pdf') or f.lower().endswith('.txt')]
     
     for filename in tqdm(files, desc=f"Reading files in {folder_name}"):
         file_path = os.path.join(folder_path, filename)
         if filename.lower().endswith('.pdf'):
             full_text += extract_text_from_pdf(file_path) + " "
+            processed_files.append(filename)
         elif filename.lower().endswith('.txt'):
             try:
                 with open(file_path, 'r', encoding='utf-8') as f:
                     full_text += f.read() + " "
+                processed_files.append(filename)
             except Exception as e:
                 print(f"Error reading {file_path}: {e}")
 
@@ -71,19 +76,14 @@ def process_folder(folder_name, nlp):
             elif token.pos_ == "ADJ":
                 pos_data["adjectives"].append(token.text)
         
-        # Keep some punctuation for Markov chains? For now, just words.
-        # Actually, for Markov chains, we usually want sentences or at least punctuation.
-        # Let's keep the raw text for Markov, and use the POS lists for templates.
         pass
 
-    # For Markov, we might just want the raw text split by sentences or just the big blob.
-    # The requirement says "raw tokens (for Markov generation)". 
-    # Let's save the raw text as a list of sentences for easier Markov training.
     sentences = [sent.text.strip() for sent in doc.sents]
 
     return {
         "id": folder_name,
         "sentences": sentences,
+        "source_files": processed_files,
         "pos": {
             "nouns": list(set(pos_data["nouns"])), # Deduplicate
             "verbs": list(set(pos_data["verbs"])),
@@ -110,7 +110,8 @@ def main():
     manifest = {
         "spirits": [],
         "total_sentences": 0,
-        "total_tokens": 0
+        "total_tokens": 0,
+        "processed_files": {}
     }
 
     for folder in sub_folders:
@@ -124,8 +125,8 @@ def main():
             # Update manifest
             manifest["spirits"].append(folder)
             manifest["total_sentences"] += len(data["sentences"])
-            # Estimate tokens (rough count)
             manifest["total_tokens"] += sum(len(s.split()) for s in data["sentences"])
+            manifest["processed_files"][folder] = data["source_files"]
 
     # Save manifest
     manifest_path = os.path.join(OUTPUT_DIR, "corpus_manifest.json")

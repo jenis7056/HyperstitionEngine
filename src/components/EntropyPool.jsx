@@ -18,12 +18,12 @@ const EntropyPool = () => {
             p.setup = () => {
                 const canvas = p.createCanvas(containerRef.current.offsetWidth, 300);
                 canvas.parent(containerRef.current);
-                p.background(20);
+                p.background(5); // Deep void
                 p.frameRate(30);
             };
 
             p.draw = () => {
-                p.background(20, 20); // Trail effect
+                p.background(5, 20); // Trail effect
 
                 // Visual representation of current entropy level
                 const intensity = p.map(entropyLevel, 0, maxEntropy, 0, 255);
@@ -52,10 +52,15 @@ const EntropyPool = () => {
                 }
 
                 // Display Entropy Level Text
-                p.fill(255);
+                p.fill(0, 255, 65);
                 p.noStroke();
                 p.textSize(14);
-                p.text(`Entropy: ${Math.floor(entropyLevel)} / ${maxEntropy}`, 10, 25);
+                p.textFont('Courier New');
+                p.text(`ENTROPY_LEVEL: ${Math.floor(entropyLevel)} / ${maxEntropy}`, 10, 25);
+
+                // Bar at bottom
+                p.fill(0, 255, 65);
+                p.rect(0, p.height - 2, p.map(entropyLevel, 0, maxEntropy, 0, p.width), 2);
             };
 
             p.windowResized = () => {
@@ -71,6 +76,8 @@ const EntropyPool = () => {
                 this.pos = p.createVector(x, y);
                 this.vel = p5.Vector.random2D().mult(p.random(1, 3));
                 this.alpha = 255;
+                // Randomly green or purple
+                this.color = p.random() > 0.5 ? [0, 255, 65] : [188, 19, 254];
             }
 
             update() {
@@ -80,9 +87,8 @@ const EntropyPool = () => {
 
             display(intensity) {
                 this.p.noStroke();
-                // Color shifts based on entropy intensity
-                this.p.fill(intensity, 100, 255 - intensity, this.alpha);
-                this.p.ellipse(this.pos.x, this.pos.y, 5);
+                this.p.fill(this.color[0], this.color[1], this.color[2], this.alpha);
+                this.p.ellipse(this.pos.x, this.pos.y, 4);
             }
 
             isDead() {
@@ -103,9 +109,9 @@ const EntropyPool = () => {
 
     return (
         <div className="entropy-pool-container">
-            <h3>Entropy Pool</h3>
-            <div ref={containerRef} className="p5-canvas-container" style={{ width: '100%', height: '300px', border: '1px solid #333' }}></div>
-            <p className="instruction">Move your mouse vigorously within the box to generate chaos.</p>
+            <h3>ENTROPY_POOL</h3>
+            <div ref={containerRef} className="p5-canvas-container" style={{ width: '100%', height: '300px', border: '1px solid #003b00' }}></div>
+            <p className="instruction">PERTURB THE SYSTEM TO GENERATE CHAOS.</p>
         </div>
     );
 };

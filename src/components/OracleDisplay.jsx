@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import useEntropyStore from '../store/entropyStore';
 
 const OracleDisplay = ({ onGenerate }) => {
@@ -10,9 +10,15 @@ const OracleDisplay = ({ onGenerate }) => {
         setGenerationMode
     } = useEntropyStore();
 
-    // This list should ideally come from the manifest, but for now we can hardcode or pass it down
-    // Let's assume the parent passes the available spirits or we fetch them.
-    // For this step, I'll just use the store's generated text and a generate button.
+    const [isGlitching, setIsGlitching] = useState(false);
+
+    useEffect(() => {
+        if (generatedText) {
+            setIsGlitching(true);
+            const timer = setTimeout(() => setIsGlitching(false), 300);
+            return () => clearTimeout(timer);
+        }
+    }, [generatedText]);
 
     return (
         <div className="oracle-display">
@@ -22,13 +28,13 @@ const OracleDisplay = ({ onGenerate }) => {
                         className={`mode-btn ${generationMode === 'markov' ? 'active' : ''}`}
                         onClick={() => setGenerationMode('markov')}
                     >
-                        Markov
+                        MARKOV_CHAIN
                     </button>
                     <button
                         className={`mode-btn ${generationMode === 'grammar' ? 'active' : ''}`}
                         onClick={() => setGenerationMode('grammar')}
                     >
-                        Grammar
+                        GRAMMAR_SIGIL
                     </button>
                 </div>
 
@@ -37,20 +43,22 @@ const OracleDisplay = ({ onGenerate }) => {
                     disabled={entropyLevel < 20}
                     className="generate-btn"
                 >
-                    {entropyLevel < 20 ? "Gather more entropy..." : "Consult the Oracle"}
+                    {entropyLevel < 20 ? "GATHER_ENTROPY..." : "CONSULT_ORACLE"}
                 </button>
             </div>
 
             <div className="output-area">
                 {generatedText ? (
-                    <p className="oracle-text">{generatedText}</p>
+                    <p className={`oracle-text ${isGlitching ? 'glitch' : ''}`}>{generatedText}</p>
                 ) : (
-                    <p className="placeholder-text">The void awaits your query...</p>
+                    <p className="placeholder-text">AWAITING_TRANSMISSION...</p>
                 )}
             </div>
 
             <div className="stats">
-                <span>Spirits: {selectedSpirits.length} | Mode: {generationMode.toUpperCase()}</span>
+                <span style={{ fontSize: '0.7rem', color: '#666' }}>
+                    SPIRITS_BOUND: {selectedSpirits.length} | PROTOCOL: {generationMode.toUpperCase()}
+                </span>
             </div>
         </div>
     );

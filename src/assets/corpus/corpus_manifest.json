@@ -1,0 +1,86 @@
+{
+  "spirits": [
+    "N_Land",
+    "Bible",
+    "Marcus_A",
+    "M_Cicero",
+    "F_Nietzsche",
+    "Yokai",
+    "Confucius",
+    "GoBadukWeiqi",
+    "N_Bostrom",
+    "Y_Harari",
+    "AI"
+  ],
+  "total_sentences": 88197,
+  "total_tokens": 1431422,
+  "processed_files": {
+    "N_Land": [
+      "Nick_Land_Fanged_Noumena.pdf"
+    ],
+    "Bible": [
+      "Bible_KJV.txt",
+      "Dominions.pdf",
+      "Dominions_4_Chronicles_and_Bestiary.pdf",
+      "Dominions_5_Manual_and_Origins.pdf",
+      "Fishes_Flowers_Fire.txt",
+      "Oriental_Religions_in_Roman_Paganism.txt",
+      "Religion_of_Ancient_Rome.txt",
+      "The_God_Idea_of_the_Ancients.txt",
+      "The_Venus_of_Milo.txt"
+    ],
+    "Marcus_A": [
+      "Aurelius_Meditations.txt"
+    ],
+    "M_Cicero": [
+      "Cicero_Letters_to_Atticus.txt",
+      "Cicero_The_Orations.txt",
+      "Cicero_Treatises_on_Friendship.txt",
+      "Cicero_Tusculan.txt"
+    ],
+    "F_Nietzsche": [
+      "Nietzsche_BeyondGoodandEvil.txt",
+      "Nietzsche_Ecce_Homo.txt",
+      "Nietzsche_The_Antichrist.txt",
+      "Nietzsche_Zarathustra.txt"
+    ],
+    "Yokai": [
+      "Hearn_Kwaidan.txt",
+      "Myths_of_China_and_Japan.txt",
+      "Ozaki_FairyTales.txt"
+    ],
+    "Confucius": [
+      "Sunzi_The_Art_of_War.txt",
+      "The_Analects_of_Confucius.txt"
+    ],
+    "GoBadukWeiqi": [
+      "Accelerating_Self_Play_Learning_in_Go.pdf",
+      "AlphaGoNaturePaper.pdf",
+      "AlphaGoZeroNaturePaper.pdf",
+      "ChoChikun_LifeDeath.pdf",
+      "GoSeigen_Book.pdf"
+    ],
+    "N_Bostrom": [
+      "Bostrom_Risks.pdf",
+      "Bostrom_Simulation.pdf"
+    ],
+    "Y_Harari": [
+      "Harari_AI_has_hacked_human_operating_system.pdf",
+      "Harari_Government_and_AI.pdf",
+      "Harari_TECHNOLOGY_FAVORS_TYRANNY.pdf"
+    ],
+    "AI": [
+      "Attention_Is_All_You_Need.pdf",
+      "Awakening_from_the_Meaning_Crisis_Transcripts.txt",
+      "A_Path_Towards_Autonomous_Machine_Intelligence.pdf",
+      "Concrete_Problems_in_AI_Safety.pdf",
+      "Deep_Reinforcement_Learning_from_Human_Preferences.pdf",
+      "kngmkr.txt",
+      "Scaling_Laws_for_Neural_Language_Models.pdf",
+      "Sparks_of_AGI_GPT4.pdf",
+      "The_Singularity_A_Philosophical_Analysis.pdf",
+      "Why_AI_Is_A_Philosophical_Rapture.txt",
+      "World_Models.pdf"
+    ]
+  }
+}
