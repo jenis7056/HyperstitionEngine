@@ -1,6 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react';
 import EntropyPool from './components/EntropyPool';
 import OracleDisplay from './components/OracleDisplay';
+import BatchGenerator from './components/BatchGenerator';
+import LoadingScreen from './components/LoadingScreen';
 import useEntropyStore from './store/entropyStore';
 import { loadManifest, loadSpirit } from './services/corpusLoader';
 import { MarkovEngine } from './engine/markov';
@@ -8,12 +10,10 @@ import { GrammarEngine } from './engine/grammar';
 
 function App() {
   const [corpusLoaded, setCorpusLoaded] = useState(false);
-  const [availableSpirits, setAvailableSpirits] = useState([]);
-  const [loadingStatus, setLoadingStatus] = useState("Initializing...");
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadingStatus, setLoadingStatus] = useState("INITIALIZING...");
 
   const {
-    selectedSpirits,
-    toggleSpirit,
     entropyLevel,
     consumeEntropy,
     setGeneratedText,
@@ -25,77 +25,64 @@ function App() {
 
   useEffect(() => {
     const initCorpus = async () => {
-      setLoadingStatus("Loading Manifest...");
+      setLoadingStatus("LOADING MANIFEST...");
       const manifest = await loadManifest();
 
       if (manifest) {
-        setAvailableSpirits(manifest.spirits);
-
-        setLoadingStatus("Summoning Spirits...");
+        setLoadingStatus("SUMMONING SPIRITS...");
 
         const spiritPromises = manifest.spirits.map(id => loadSpirit(id));
         const spiritsData = await Promise.all(spiritPromises);
 
-        setLoadingStatus("Training Engines...");
+        setLoadingStatus("TRAINING ENGINES...");
         await markovRef.current.loadCorpus(spiritsData);
         grammarRef.current.loadCorpus(spiritsData);
 
         setCorpusLoaded(true);
-        setLoadingStatus("Ready.");
+        setLoadingStatus("READY.");
+
+        // Artificial delay to allow p5 and other heavy assets to settle
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 2000);
+
       } else {
-        setLoadingStatus("Failed to load corpus manifest. Did you run the ingestor?");
+        setLoadingStatus("FAILED TO LOAD CORPUS. CHECK INGESTOR.");
       }
     };
 
     initCorpus();
   }, []);
 
-  const handleGenerate = () => {
+  const handleGenerate = async () => {
     if (!corpusLoaded) return;
 
     let text = "";
     if (generationMode === 'markov') {
-      text = markovRef.current.generate(entropyLevel);
+      text = await markovRef.current.generate(entropyLevel);
     } else {
       text = grammarRef.current.generate(entropyLevel);
     }
 
     setGeneratedText(text);
-
-    // Consume some entropy
-    consumeEntropy(50);
+    consumeEntropy(20);
   };
+
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
 
   return (
     <div className="app-container">
-      <header>
-        <h1>HyperstitionEngine</h1>
-        <div className="status-bar">{loadingStatus}</div>
+      <header className="header">
+        <h1 className="title">HYPERSTITION_ENGINE</h1>
+        <div className="version-display">v0.9.0 (BETA)</div>
       </header>
 
       <main>
-        <div className="top-section">
-          <EntropyPool />
-        </div>
-
-        <div className="middle-section">
-          <OracleDisplay onGenerate={handleGenerate} />
-        </div>
-
-        <div className="bottom-section">
-          <h3>Spirits</h3>
-          <div className="spirit-list">
-            {availableSpirits.map(spirit => (
-              <button
-                key={spirit}
-                className={`spirit-tag ${selectedSpirits.includes(spirit) ? 'active' : ''}`}
-                onClick={() => toggleSpirit(spirit)}
-              >
-                {spirit}
-              </button>
-            ))}
-          </div>
-        </div>
+        <EntropyPool />
+        <OracleDisplay onGenerate={handleGenerate} />
+        <BatchGenerator />
       </main>
     </div>
   );

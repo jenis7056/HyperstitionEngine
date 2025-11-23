@@ -32,10 +32,13 @@ export class MarkovEngine {
         }
     }
 
-    generate(entropyLevel) {
+    async generate(entropyLevel) {
         if (!this.markov) {
             return "The spirits are silent (Corpus not loaded).";
         }
+
+        // Yield to main thread to allow UI to update
+        await new Promise(resolve => setTimeout(resolve, 0));
 
         // Use entropy to influence generation parameters
         // Higher entropy -> lower score threshold, more randomness
@@ -45,10 +48,7 @@ export class MarkovEngine {
         const randomness = Math.min(Math.max(entropyLevel / 1000, 0.1), 1.0); // 0.1 to 1.0
 
         const options = {
-            maxTries: 50, // Try harder if entropy is high? Or less hard?
-            // filter: (result) => {
-            //     return result.string.split(' ').length >= 5; // Min length
-            // }
+            maxTries: 50,
         };
 
         try {

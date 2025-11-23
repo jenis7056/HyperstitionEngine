@@ -1,21 +1,20 @@
-# HyperstitionEngine
+# HyperstitionEngine (v0.9.0 BETA)
 
-    subgraph "Ingestion (Python)"
-        A[Raw PDFs/TXTs] -->|process_corpus.py| B(Structured JSON Corpus)
-    end
-    
-    subgraph "HyperstitionEngine (React)"
-        B -->|Load| C[Corpus Loader]
-        C --> D[Markov Engine]
-        C --> H[Grammar Engine]
-        E[Entropy Pool <br/> p5.js] -->|Noise/Input| F[Entropy Store <br/> Zustand]
-        F -->|Trigger| D
-        F -->|Trigger| H
-        D -->|Generated Text| G[Oracle Display]
-        H -->|Generated Text| G
-    end
-# HyperstitionEngine
+![Hyperstition Engine Screenshot](Hyperstition_Engine_v0.0.0_Screenshot01.PNG)
 
+A cyber-occult interface for generating "hyperstitions" (fictional ideas that make themselves real) using a combination of Markov chains and grammar-based generation, fueled by user-generated entropy.
+
+## Features
+- **Entropy Pool**: Interactive particle system (Smoke/Warp physics) to seed randomness.
+- **Dual Engines**: 
+  - **Markov Chain**: Probabilistic text generation based on a corpus of "Spirits" (Aspects).
+  - **Grammar Sigil**: Template-based generation for structured prophecies.
+- **Aspects (Spirits)**: Toggleable source texts (e.g., Nick Land, Bible, CCru).
+- **Cyber-Occult UI**: "OG Amber" monochrome aesthetic with grain/scanline effects.
+- **Batch Generation**: Generate 50 outputs at once for quality testing.
+
+## Architecture
+```mermaid
     subgraph "Ingestion (Python)"
         A[Raw PDFs/TXTs] -->|process_corpus.py| B(Structured JSON Corpus)
     end
@@ -34,16 +33,6 @@
 
 > **Philosophy**: We strictly avoid Large Language Models (LLMs) for the generation phase to preserve "divine randomness" and the chaotic nature of the cut-up technique.
 
-## Features
-- **Client-Side Generation**: All logic runs in the browser using React.
-- **Entropy Pool**: A p5.js-based visual interface where user interaction (mouse movement) generates "entropy", which fuels the generation engine.
-- **Dual-Mode Oracle**:
-    - **Markov Chain**: Generates chaotic, dream-like text sequences from the corpus.
-    - **Grammar Sigil**: Uses "Hyperstitional" templates (Accelerator, Void, Prophecy) filled with corpus vocabulary, selected based on current entropy levels.
-- **The Council of Spirits**: A curated corpus including Nick Land, The Bible, Marcus Aurelius, and more.
-- **Cyber-Occult UI**: A "glitch-prophet" aesthetic designed to bypass the conscious filter.
-
-## Architecture
 ## Quick Start
 
 For detailed setup and usage instructions, please see [INSTRUCTIONS.md](./INSTRUCTIONS.md).

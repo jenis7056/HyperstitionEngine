@@ -1,64 +1,128 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import useEntropyStore from '../store/entropyStore';
 
 const OracleDisplay = ({ onGenerate }) => {
     const {
         generatedText,
-        entropyLevel,
+        isGenerating,
         selectedSpirits,
+        toggleSpirit,
         generationMode,
-        setGenerationMode
+        setGenerationMode,
+        entropyLevel
     } = useEntropyStore();
 
-    const [isGlitching, setIsGlitching] = useState(false);
+    const [displayText, setDisplayText] = useState("");
+    const [revealIndex, setRevealIndex] = useState(0);
 
+    // Aspects List (Renamed from Spirits)
+    const aspects = [
+        "N_Land", "Gods", "Marcus_A", "M_Cicero", "F_Nietzsche",
+        "Yokai", "Confucius", "GoBadukWeiqi", "N_Bostrom",
+        "Y_Harari", "AI"
+    ];
+
+    // Text Reveal Effect
     useEffect(() => {
         if (generatedText) {
-            setIsGlitching(true);
-            const timer = setTimeout(() => setIsGlitching(false), 300);
-            return () => clearTimeout(timer);
+            setRevealIndex(0);
+            const interval = setInterval(() => {
+                setRevealIndex(prev => {
+                    if (prev >= generatedText.length) {
+                        clearInterval(interval);
+                        return prev;
+                    }
+                    return prev + 1; // Reveal 1 char per tick
+                });
+            }, 10); // Fast reveal
+
+            return () => clearInterval(interval);
         }
     }, [generatedText]);
 
-    return (
-        <div className="oracle-display">
-            <div className="controls">
-                <div className="mode-toggle">
-                    <button
-                        className={`mode-btn ${generationMode === 'markov' ? 'active' : ''}`}
-                        onClick={() => setGenerationMode('markov')}
-                    >
-                        MARKOV_CHAIN
-                    </button>
-                    <button
-                        className={`mode-btn ${generationMode === 'grammar' ? 'active' : ''}`}
-                        onClick={() => setGenerationMode('grammar')}
-                    >
-                        GRAMMAR_SIGIL
-                    </button>
-                </div>
+    // Decipher Logic
+    useEffect(() => {
+        if (!generatedText) {
+            setDisplayText("");
+            return;
+        }
 
+        const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_#@&";
+        let scrambled = "";
+
+        // Part 1: Revealed text
+        scrambled += generatedText.substring(0, revealIndex);
+
+        // Part 2: Scrambled tail (deciphering)
+        if (revealIndex < generatedText.length) {
+            const remaining = generatedText.length - revealIndex;
+            for (let i = 0; i < Math.min(remaining, 10); i++) {
+                scrambled += chars[Math.floor(Math.random() * chars.length)];
+            }
+        }
+
+        setDisplayText(scrambled);
+
+    }, [revealIndex, generatedText]);
+
+
+    const handleGenerateClick = () => {
+        if (entropyLevel < 10) {
+            alert("Insufficient Entropy. Perturb the system.");
+            return;
+        }
+        if (onGenerate) {
+            onGenerate();
+        }
+    };
+
+    return (
+        <div className="oracle-container">
+            <div className="controls">
                 <button
-                    onClick={onGenerate}
-                    disabled={entropyLevel < 20}
-                    className="generate-btn"
+                    className={`mode-btn ${generationMode === 'markov' ? 'active' : ''}`}
+                    onClick={() => setGenerationMode('markov')}
                 >
-                    {entropyLevel < 20 ? "GATHER_ENTROPY..." : "CONSULT_ORACLE"}
+                    MARKOV_CHAIN
+                </button>
+                <button
+                    className={`mode-btn ${generationMode === 'grammar' ? 'active' : ''}`}
+                    onClick={() => setGenerationMode('grammar')}
+                >
+                    GRAMMAR_SIGIL
                 </button>
             </div>
 
+            <button className="generate-btn" onClick={handleGenerateClick} disabled={isGenerating}>
+                {isGenerating ? "TRANSMITTING..." : "SACRIFICE ENTROPY"}
+            </button>
+
             <div className="output-area">
                 {generatedText ? (
-                    <p className={`oracle-text ${isGlitching ? 'glitch' : ''}`}>{generatedText}</p>
+                    <p className={`oracle-text ${isGenerating ? 'glitch' : ''}`}>
+                        {displayText}
+                    </p>
                 ) : (
-                    <p className="placeholder-text">AWAITING_TRANSMISSION...</p>
+                    <p className="subtitle">AWAITING_TRANSMISSION...</p>
                 )}
             </div>
 
-            <div className="stats">
-                <span style={{ fontSize: '0.7rem', color: '#666' }}>
-                    SPIRITS_BOUND: {selectedSpirits.length} | PROTOCOL: {generationMode.toUpperCase()}
-                </span>
+            <div className="spirits-section">
+                <h3 className="section-title">ASPECTS</h3>
+                <div className="spirit-grid">
+                    {aspects.map(aspect => (
+                        <button
+                            key={aspect}
+                            className={`spirit-btn ${selectedSpirits.includes(aspect === "Gods" ? "Bible" : aspect) ? 'selected' : ''}`}
+                            onClick={() => toggleSpirit(aspect === "Gods" ? "Bible" : aspect)}
+                        >
+                            {aspect}
+                        </button>
+                    ))}
+                </div>
+                <div style={{ textAlign: 'center', marginTop: '1rem', fontSize: '0.8rem', color: '#666' }}>
+                    ASPECTS_BOUND: {selectedSpirits.length} | PROTOCOL: {generationMode.toUpperCase()}
+                </div>
             </div>
         </div>
     );
